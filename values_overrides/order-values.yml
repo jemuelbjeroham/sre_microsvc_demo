@@ -1,0 +1,12 @@
+replicaCount: 2
+
+image:
+  repository: 998937835767.dkr.ecr.us-east-1.amazonaws.com/order-service
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer
+  port: 80
+
+resources: {}

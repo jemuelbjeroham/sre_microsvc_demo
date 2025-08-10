@@ -1,0 +1,60 @@
+name: Deploy Microservices to EKS
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  CLUSTER_NAME: sre-eks-cluster
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Build & Push Product Service
+      - name: Build and push product-service
+        run: |
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/product-service:latest
+          docker build -t $IMAGE_URI ./product_service
+          docker push $IMAGE_URI
+
+      # Build & Push User Service
+      - name: Build and push user-service
+        run: |
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/user-service:latest
+          docker build -t $IMAGE_URI ./user_service
+          docker push $IMAGE_URI
+
+      # Build & Push Order Service
+      - name: Build and push order-service
+        run: |
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/order-service:latest
+          docker build -t $IMAGE_URI ./order_service
+          docker push $IMAGE_URI
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install microservice ./charts/microservice \
+            -f ./values_overrides/product-service.yaml \
+            -f ./values_overrides/user-service.yaml \
+            -f ./values_overrides/order-service.yaml
