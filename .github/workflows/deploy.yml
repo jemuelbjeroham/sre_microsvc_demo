@@ -9,6 +9,7 @@ env:
   AWS_REGION: us-east-1
   CLUSTER_NAME: sre-eks-cluster
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   build-and-deploy:
@@ -31,21 +32,21 @@ jobs:
       # Build & Push Product Service
       - name: Build and push product-service
         run: |
-          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/product-service:latest
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/product-service:${IMAGE_TAG}
           docker build -t $IMAGE_URI ./product_service
           docker push $IMAGE_URI
 
       # Build & Push User Service
       - name: Build and push user-service
         run: |
-          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/user-service:latest
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/user-service:${IMAGE_TAG}
           docker build -t $IMAGE_URI ./user_service
           docker push $IMAGE_URI
 
       # Build & Push Order Service
       - name: Build and push order-service
         run: |
-          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/order-service:latest
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/order-service:${IMAGE_TAG}
           docker build -t $IMAGE_URI ./order_service
           docker push $IMAGE_URI
 
