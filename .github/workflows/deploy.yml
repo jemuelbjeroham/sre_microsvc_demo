@@ -62,14 +62,17 @@ jobs:
       - name: Deploy product-service
         run: |
           helm upgrade --install product-service ./charts/microservice \
+            --set image.tag=${IMAGE_TAG} \
             -f ./values_overrides/product-service.yaml
 
       - name: Deploy user-service
         run: |
           helm upgrade --install user-service ./charts/microservice \
+            --set image.tag=${IMAGE_TAG} \
             -f ./values_overrides/user-service.yaml
 
       - name: Deploy order-service
         run: |
           helm upgrade --install order-service ./charts/microservice \
+            --set image.tag=${IMAGE_TAG} \
             -f ./values_overrides/order-service.yaml
