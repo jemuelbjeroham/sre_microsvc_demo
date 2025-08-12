@@ -6,8 +6,8 @@ app = FastAPI(title="User Service")
 
 # Prometheus metrics
 REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP Requests', ['method', 'endpoint'])
-CPU_USAGE = Gauge('process_cpu_seconds_total', 'CPU time used by process')
-MEMORY_USAGE = Gauge('process_resident_memory_bytes', 'Resident memory size in bytes')
+CPU_USAGE = Gauge('custom_process_cpu_seconds_total', 'CPU time used by process')
+MEMORY_USAGE = Gauge('custom_process_resident_memory_bytes', 'Resident memory size in bytes')
 
 def update_system_metrics():
     CPU_USAGE.set(psutil.Process().cpu_percent(interval=None) / 100)  # CPU % as fraction
