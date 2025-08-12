@@ -52,9 +52,23 @@ jobs:
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
 
-      - name: Deploy with Helm
+      # - name: Deploy with Helm
+      #   run: |
+      #     helm upgrade --install microservice ./charts/microservice \
+      #       -f ./values_overrides/product-service.yaml \
+      #       -f ./values_overrides/user-service.yaml \
+      #       -f ./values_overrides/order-service.yaml
+      - name: Deploy product-service
         run: |
-          helm upgrade --install microservice ./charts/microservice \
-            -f ./values_overrides/product-service.yaml \
-            -f ./values_overrides/user-service.yaml \
+          helm upgrade --install product-service ./charts/microservice \
+            -f ./values_overrides/product-service.yaml
+
+      - name: Deploy user-service
+        run: |
+          helm upgrade --install user-service ./charts/microservice \
+            -f ./values_overrides/user-service.yaml
+
+      - name: Deploy order-service
+        run: |
+          helm upgrade --install order-service ./charts/microservice \
             -f ./values_overrides/order-service.yaml
