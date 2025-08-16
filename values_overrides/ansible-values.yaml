@@ -4,6 +4,4 @@ image:
   repository: 998937835767.dkr.ecr.us-east-1.amazonaws.com/ansible-runner
   pullPolicy: Always
 
-command: [ "sleep", "infinity" ]
-
 resources: {}
