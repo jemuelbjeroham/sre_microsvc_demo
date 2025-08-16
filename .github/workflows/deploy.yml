@@ -29,6 +29,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Build image for Ansible Runner
+        run: |
+          IMAGE_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/ansible-runner:${IMAGE_TAG}
+          docker build -t $IMAGE_URI ./ansible_runner
+          docker push $IMAGE_URI
+
       # Build & Push Product Service
       - name: Build and push product-service
         run: |
@@ -76,3 +82,9 @@ jobs:
           helm upgrade --install order-service ./charts/microservice \
             --set image.tag=${IMAGE_TAG} \
             -f ./values_overrides/order-service.yaml
+
+      - name: Deploy Ansible Runner
+        run: |
+          helm upgrade --install ansible-runner ./ansible-charts/microservice \
+            --set image.tag=${IMAGE_TAG} \
+            -f ./values_overrides/ansible-values.yaml

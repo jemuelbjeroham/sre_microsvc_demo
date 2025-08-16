@@ -1,0 +1,18 @@
+replicaCount: 1
+
+image:
+  repository: nginx   # overridden in values_overrides
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
