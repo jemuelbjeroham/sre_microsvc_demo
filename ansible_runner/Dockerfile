@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10
 RUN apt-get update && apt-get install -y --no-install-recommends \
   sshpass git python3-pip && \
   pip install ansible boto3 && \
